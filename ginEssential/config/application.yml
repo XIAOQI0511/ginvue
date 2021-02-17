@@ -1,0 +1,6 @@
+server:
+#  port:1016
+datasource:
+  dirverName:sqlite
+  path:ginessential.db
+  log-mode:true

@@ -7,6 +7,11 @@
 
 `go get -u github.com/jinzhu/gorm`
 
+`go get github.com/dgrijalva/jwt-go`
+
+`go get github.com/spf13/viper`
+config组件
+
 # 使用工具
 
 ## postman
