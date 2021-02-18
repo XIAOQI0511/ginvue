@@ -16,10 +16,21 @@ import (
 
 func Register(ctx *gin.Context) {
 	DB := common.GetDB()
+	//使用map获取请求的参数
+	// var requestMap = make(map[string]string)
+	// json.NewDecoder(ctx.Request.Body).Decode(&requestMap)//解析json到map
+	//使用结构体获取参数
+	var requestUser = model.User{}
+	// json.NewDecoder(ctx.Request.Body).Decode(&requestUser)
+	//使用gin框架bind方法获取参数
+	ctx.Bind(&requestUser)
 	//获取参数
-	name := ctx.PostForm("name")
-	telephone := ctx.PostForm("telephone")
-	password := ctx.PostForm("password")
+	// name := ctx.PostForm("name")
+	// telephone := ctx.PostForm("telephone")
+	// password := ctx.PostForm("password")
+	name := requestUser.Name
+	telephone := requestUser.Telephone
+	password := requestUser.Password
 	//数据验证
 	if len(telephone) != 11 {
 		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号为11位！")
@@ -49,10 +60,14 @@ func Register(ctx *gin.Context) {
 		Password:  string(hasedPassword),
 	}
 	DB.Create(&newUser)
-	ctx.JSON(200, gin.H{
-		"code": 200,
-		"msg":  "注册成功",
-	})
+	//发放token
+	token, err := common.ReleaseToken(newUser)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "系统异常"})
+		log.Printf("token generate error:%v", err)
+		return
+	}
+	response.Success(ctx, gin.H{"token": token}, "注册成功")
 }
 
 func Login(ctx *gin.Context) {
@@ -77,8 +92,11 @@ func Login(ctx *gin.Context) {
 		response.Response(ctx, http.StatusBadRequest, 400, nil, "密码错误")
 		return
 	}
+
+	//发放token
 	token, err := common.ReleaseToken(user)
 	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "系统异常"})
 		log.Printf("token generate error:%v", err)
 		return
 	}

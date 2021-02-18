@@ -11,5 +11,5 @@ func main() {
 	defer db.Close() //延迟关闭？
 	r := gin.Default()
 	r = CollectRoute(r)
-	panic(r.Run())
+	panic(r.Run(":1016"))
 }
