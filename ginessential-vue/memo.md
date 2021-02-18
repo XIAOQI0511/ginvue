@@ -4,10 +4,11 @@ nvm use 10.14.2
 
 scoop install nodejs@10.14.2
 scoop reset nodejs@10.14.2
-
+scoop install yarn
 
 vue create projectName
 
+yarn install
 yarn serve
 
 yarn add vue bootstrap-vue bootstrap
