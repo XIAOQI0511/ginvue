@@ -13,6 +13,7 @@ import './assets/sass/index.scss';
 
 Vue.config.productionTip = false;
 
+Vue.use(Vuex);
 // install bootsrapvue
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
@@ -20,7 +21,6 @@ Vue.use(IconsPlugin);
 Vue.use(Vuelidate);
 // axios
 Vue.use(VueAxios, axios);
-Vue.use(Vuex);
 
 new Vue({
   router,

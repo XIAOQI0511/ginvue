@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store';
 import Home from '../views/Home.vue';
+import userRoutes from './module/user';
 
 Vue.use(VueRouter);
 
@@ -19,16 +21,7 @@ const routes = [
     // 匿名函数回调，惰性加载
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
-  {
-    path: '/register',
-    name: 'register',
-    component: () => import(/* webpackChunkName: "about" */ '../views/register/Register.vue'),
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import(/* webpackChunkName: "about" */ '../views/login/Login.vue'),
-  },
+  ...userRoutes,
 ];
 
 const router = new VueRouter({
@@ -36,5 +29,19 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-
+router.beforeEach((to, from, next) => {
+  // to是要去的路由，from是从哪个路由过来
+  // 判断是否需要登录
+  if (to.meta.auth) {
+    if (store.state.userModule.token) {
+      // 这里还要判断token的有效性，比如有没有过期，需要后台发放token的时候带上token
+      // 的有效期，如果token无效，需要请求token
+      next();
+    } else {
+      router.push({ name: 'login' });
+    }
+  } else {
+    next();
+  }
+});
 export default router;

@@ -19,8 +19,8 @@
               <template v-slot:button-content>
                 <em>{{userInfo.name}}</em>
               </template>
-              <b-dropdown-item href="#">个人主页</b-dropdown-item>
-              <b-dropdown-item href="#">登出</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({name:'profile'})">个人主页</b-dropdown-item>
+              <b-dropdown-item @click="logout">登出</b-dropdown-item>
             </b-nav-item-dropdown>
             <div v-if="!userInfo">
               <b-nav-item v-if="$route.name !='login'"
@@ -36,16 +36,21 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
 
 export default {
   // 计算属性
-  computed: {
-    userInfo() {
-      // 本地缓存不是响应式的
-      // return JSON.parse(storageService.get(storageService.USER_INFO));// 反序列化
-      return this.$store.state.userModule.userInfo;
-    },
-  },
+  // computed: {
+  //   userInfo() {
+  //     // 本地缓存不是响应式的
+  //     // return JSON.parse(storageService.get(storageService.USER_INFO));// 反序列化
+  //     return this.$store.state.userModule.userInfo;
+  //   },
+  // },
+  computed: mapState({
+    userInfo: (state) => state.userModule.userInfo,
+  }),
+  methods: mapActions('userModule', ['logout']),
 };
 </script>
 

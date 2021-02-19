@@ -32,4 +32,6 @@ vuex 是响应式的
 f12 network > 报错的文件 > header,preview
 application > local storage > token
 
-registor 时的 network token 与 info 的 application token 做比较
+register 时的 network token 与 info 的 application token 做比较
+前端登出 删除用户 token
+后台登出 让用户 token 失效

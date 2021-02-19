@@ -51,6 +51,7 @@
 <script>
 import { required, minLength } from 'vuelidate/lib/validators';
 import customValidator from '@/helper/validator';
+import { mapActions } from 'vuex';
 
 export default {
   // 绑定数据
@@ -62,7 +63,7 @@ export default {
       },
       // 定义属性，控制是否显示
       // showTelephoneValidate: false,
-      // validation: null, // 初始时不验证
+      validation: null, // 初始时不验证
     };
   },
   // $v对象在此定义后生成属性
@@ -79,6 +80,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions('userModule', { userlogin: 'login' }),
     validateState(name) {
       // es6解构赋值
       // 初始化时$dirty=false，与表单交互时$dirty=true，返回error值
@@ -87,12 +89,23 @@ export default {
     },
     // 绑定方法提交注册
     login() {
-      // if (this.user.telephone.length !== 11) {
-      //   // this.showTelephoneValidate = true;
-      //   this.validation = false;
-      //   return;
-      // }
-      // this.validation = true;
+      // 验证数据
+      this.$v.user.$touch();
+      if (this.$v.user.$anyError) {
+        console.log('API拒绝请求');
+        return;
+      }
+      // 请求api
+      this.userlogin(this.user).then(() => {
+        // 跳转首页
+        this.$router.replace({ name: 'Home' });
+      }).catch((err) => {
+        this.$bvToast.toast(err.response.data.msg, {
+          title: '数据验证错误',
+          variant: 'danger',
+          solid: true,
+        });
+      });
       console.log('login');
     },
   },

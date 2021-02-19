@@ -58,7 +58,9 @@
 <script>
 import { required, minLength } from 'vuelidate/lib/validators';
 import customValidator from '@/helper/validator';
-import userService from '@/service/userService';
+
+// import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   // 绑定数据
@@ -91,6 +93,8 @@ export default {
     },
   },
   methods: {
+    //   ...mapMutations('userModule', ['SET_TOKEN', 'SET_USERINFO']),
+    ...mapActions('userModule', { userRegister: 'register' }), // 参数1：命名空间 参数2：分发类型，起别名
     validateState(name) {
       // es6解构赋值
       // 初始化时$dirty=false，与表单交互时$dirty=true，返回error值
@@ -104,28 +108,17 @@ export default {
       if (this.$v.user.$anyError) {
         return;
       }
-      // const api = 'http://localhost:1016/api/auth/register';
-      // this.axios.post(api, { ...this.user }).then((res) => {
-      userService.register(this.user).then((res) => {
-        // 保存token
-        this.$store.commit('userModule/SET_TOKEN', res.data.data.token);
-        // storageService.set(storageService.USER_TOKEN, res.data.data.token);
-        userService.info().then((response) => {
-          // 保存用户信息
-          this.$store.commit('userModule/SET_USERINFO', response.data.data.user);
-          // storageService.set(storageService.USER_INFO,
-          //   JSON.stringify(response.data.data.user));// 序列化
-
-          // 跳转主页
-          this.$router.replace({ name: 'Home' });
-        });
+      // 请求
+      // this.$store.dispatch('userModule/register', this.user).then(() => {
+      this.userRegister(this.user).then(() => {
+        // 跳转主页
+        this.$router.replace({ name: 'Home' });
       }).catch((err) => {
         this.$bvToast.toast(err.response.data.msg, {
           title: '数据验证错误',
           variant: 'danger',
           solid: true,
         });
-        console.log('err:', err.response);
       });
       // 请求api
       // if (this.user.telephone.length !== 11) {
